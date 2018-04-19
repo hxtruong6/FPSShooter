@@ -11,7 +11,7 @@ public class GunController : MonoBehaviour {
     protected bool isFiring;
 
     // Update is called once per frame
-    void Update () {
+    protected virtual void Update () {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             StartFiring();
