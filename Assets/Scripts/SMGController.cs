@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class SMGController : GunController
 {
+    private const int LayerZombie = 8;
+
     public float coolDown;
     public AnimationClip shootingClip;
-    public AudioSource sfxShoot;
     public GameObject flash;
     public ParticleSystem bulletTrail;
     public Transform aimingCamera;
-    public Transform cube;
+    //public ParticleSystem dustEffect;
+    public Transform dustPrefab;
+    public Transform bloodPrefab;
+    public int damage;
 
     private float counter;
     private float shootClipLen;
@@ -53,11 +57,35 @@ public class SMGController : GunController
 
             RaycastHit hitInfo;
             if (Physics.Raycast(aimingCamera.position, aimingCamera.forward, 
-                out hitInfo))
+                out hitInfo,
+                100f, LayerMask.GetMask("Zombie", "Terrain", "Default")))
             {
-                var newCube = Instantiate(cube);
-                newCube.transform.position = hitInfo.point;
-            }            
+                if (hitInfo.collider.gameObject.layer == LayerZombie)
+                {
+                    var bloodEffect = Instantiate(bloodPrefab);
+                    bloodEffect.transform.position = hitInfo.point;
+                    bloodEffect.transform.forward = -aimingCamera.forward;
+
+                    var zombie = hitInfo.collider.GetComponent<Zombie>();
+                    zombie.TakeDamage(damage);
+                }
+                else
+                {
+                    var dustEffect = Instantiate(dustPrefab);
+                    dustEffect.transform.position = hitInfo.point;
+                    dustEffect.transform.forward = hitInfo.normal;
+                }
+
+                float distance = Vector3.Distance(
+                    hitInfo.point, bulletTrail.transform.position);
+                var main = bulletTrail.main;
+                main.startLifetime = distance / main.startSpeed.constant;
+            }
+            else
+            {
+                var main = bulletTrail.main;
+                main.startLifetime = 1f;
+            }
         }
     }
 }

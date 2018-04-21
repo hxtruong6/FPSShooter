@@ -17,6 +17,7 @@ public class M79Controller : GunController {
             bullet.transform.rotation = firingPos.transform.rotation;
             bullet.velocity = firingPos.forward * 10f;
             loadedAmmo = 0;
+            sfxShoot.Play();
         }
     }
 }

@@ -6,6 +6,7 @@ public class GunController : MonoBehaviour {
 
     public Animator anim;
     public Transform firingPos;
+    public AudioSource sfxShoot;
 
     protected int loadedAmmo;
     protected bool isFiring;
