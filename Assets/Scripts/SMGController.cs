@@ -66,7 +66,7 @@ public class SMGController : GunController
                     bloodEffect.transform.position = hitInfo.point;
                     bloodEffect.transform.forward = -aimingCamera.forward;
 
-                    var zombie = hitInfo.collider.GetComponent<Zombie>();
+                    var zombie = hitInfo.collider.GetComponentInParent<Zombie>();
                     zombie.TakeDamage(damage);
                 }
                 else
