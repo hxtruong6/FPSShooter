@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -44,13 +45,19 @@ public class SMGController : GunController
     protected override void UpdateFiring()
     {
         base.UpdateFiring();
-
+      
         counter -= Time.deltaTime;
-        if (counter <= 0)
-        {
+        if (LoadedAmmo <= 0) {
+            anim.SetBool("needReload", true);
+            return;
+        }
+        if (counter <= 0 && LoadedAmmo >0) {
+           
             anim.Play("Shoot01", 0, 0f);
             counter += coolDown;
             sfxShoot.Play();
+            LoadedAmmo--;
+
             flash.SetActive(true);
             flashCounter = 0.05f;
             bulletTrail.Emit(1);
@@ -87,5 +94,18 @@ public class SMGController : GunController
                 main.startLifetime = 1f;
             }
         }
+
+    
+    }
+
+    public override void OnReloadDone() {
+        LoadedAmmo = 35;
+        counter = 0;
+        anim.SetBool("needReload", false);
+    }
+
+    protected override void ReloadAmmo() {
+        LoadedAmmo = 0;
+        anim.SetBool("needReload", true);
     }
 }

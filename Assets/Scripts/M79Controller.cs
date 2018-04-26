@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class M79Controller : GunController {
+public class M79Controller : GunController
+{
     public Rigidbody bullet;
 
     protected override void UpdateFiring()
     {
         anim.ResetTrigger("Shoot");
-        if (loadedAmmo > 0)
+
+        if (LoadedAmmo > 0)
         {
             anim.SetTrigger("Shoot");
 
@@ -16,8 +18,14 @@ public class M79Controller : GunController {
             bullet.transform.position = firingPos.transform.position;
             bullet.transform.rotation = firingPos.transform.rotation;
             bullet.velocity = firingPos.forward * 10f;
-            loadedAmmo = 0;
+            LoadedAmmo = 0;
             sfxShoot.Play();
         }
+
+    }
+
+    public override void OnReloadDone()
+    {
+        LoadedAmmo = 1;
     }
 }
