@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +11,6 @@ public class SMGController : GunController
     public GameObject flash;
     public ParticleSystem bulletTrail;
     public Transform aimingCamera;
-    //public ParticleSystem dustEffect;
     public Transform dustPrefab;
     public Transform bloodPrefab;
     public int damage;
@@ -21,8 +19,10 @@ public class SMGController : GunController
     private float shootClipLen;
     private float flashCounter;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         shootClipLen = shootingClip.length;
         float animSpeed = shootClipLen / coolDown;
         anim.SetFloat("firingSpeed", animSpeed);
@@ -39,25 +39,34 @@ public class SMGController : GunController
                 flash.gameObject.SetActive(false);
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            anim.SetBool("needReload", true);
+            LoadedAmmo = 0;
+        }
         base.Update();
     }
 
     protected override void UpdateFiring()
     {
         base.UpdateFiring();
-      
+
         counter -= Time.deltaTime;
-        if (LoadedAmmo <= 0) {
+
+        if (LoadedAmmo <= 0)
+        {
             anim.SetBool("needReload", true);
             return;
         }
-        if (counter <= 0 && LoadedAmmo >0) {
-           
-            anim.Play("Shoot01", 0, 0f);
-            counter += coolDown;
-            sfxShoot.Play();
+
+        if (counter <= 0)
+        {
             LoadedAmmo--;
 
+            anim.Play("Shoot01", 0, 0f);
+            counter = coolDown;
+            sfxShoot.Play();
             flash.SetActive(true);
             flashCounter = 0.05f;
             bulletTrail.Emit(1);
@@ -94,18 +103,12 @@ public class SMGController : GunController
                 main.startLifetime = 1f;
             }
         }
-
-    
     }
 
-    public override void OnReloadDone() {
-        LoadedAmmo = 35;
-        counter = 0;
+    public override void OnReloadDone()
+    {
+        base.OnReloadDone();
+
         anim.SetBool("needReload", false);
-    }
-
-    protected override void ReloadAmmo() {
-        LoadedAmmo = 0;
-        anim.SetBool("needReload", true);
     }
 }

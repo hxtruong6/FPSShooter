@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class M79Controller : GunController
-{
+public class M79Controller : GunController {
     public Rigidbody bullet;
+
+    protected void OnEnable()
+    {
+        if (LoadedAmmo <= 0)
+        {
+            anim.SetBool("needReload", true);
+        }
+    }
 
     protected override void UpdateFiring()
     {
         anim.ResetTrigger("Shoot");
-
         if (LoadedAmmo > 0)
         {
             anim.SetTrigger("Shoot");
@@ -21,11 +27,12 @@ public class M79Controller : GunController
             LoadedAmmo = 0;
             sfxShoot.Play();
         }
-
     }
 
     public override void OnReloadDone()
     {
-        LoadedAmmo = 1;
+        base.OnReloadDone();
+
+        anim.SetBool("needReload", false);
     }
 }

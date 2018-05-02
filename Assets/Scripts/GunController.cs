@@ -1,66 +1,57 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Net.Mime;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GunController : MonoBehaviour
-{
+public class GunController : MonoBehaviour {
 
     public Animator anim;
     public Transform firingPos;
     public AudioSource sfxShoot;
-    public Image CrossHair;
-    public Text numberAmmo;
+    public Image crosshair;
+    public Text textAmmo;
+    public int maxAmmo;
+    public PlayerController player;
+
+    protected bool isFiring;
 
     private int loadedAmmo;
-
     public int LoadedAmmo
     {
         get { return loadedAmmo; }
         set {
             loadedAmmo = value;
-            numberAmmo.text = loadedAmmo.ToString();
+            textAmmo.text = loadedAmmo.ToString();
         }
-
     }
 
-    protected bool isFiring;
+    protected virtual void Start()
+    {
+        LoadedAmmo = maxAmmo;
+    }
 
     // Update is called once per frame
-    protected virtual void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+    protected virtual void Update () {
+        //if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (player.isBtnShootPressed)
         {
             StartFiring();
         }
-        else if (Input.GetKeyUp(KeyCode.Mouse0))
+        else //if (Input.GetKeyUp(KeyCode.Mouse0))
         {
             StopFiring();
-        }
-        else if (Input.GetKeyDown(KeyCode.R)) {
-            ReloadAmmo();
         }
 
         if (isFiring)
         {
             UpdateFiring();
         }
+	}
 
-    }
-
-    protected virtual void ReloadAmmo()
-    {
-        
-    }
-
-    protected virtual void StartFiring()
-    {
+    protected virtual void StartFiring() {
         isFiring = true;
     }
-    protected virtual void StopFiring()
-    {
+    protected virtual void StopFiring() {
         isFiring = false;
     }
 
@@ -73,19 +64,20 @@ public class GunController : MonoBehaviour
 
     public virtual void OnReloadDone()
     {
+        LoadedAmmo = maxAmmo;
     }
 
     private void OnEnable()
     {
-        CrossHair.gameObject.SetActive(true);
-        numberAmmo.text = LoadedAmmo.ToString();
+        crosshair.gameObject.SetActive(true);
+        textAmmo.text = LoadedAmmo.ToString();
     }
 
     private void OnDisable()
     {
-        if (CrossHair != null)
+        if (crosshair != null)
         {
-            CrossHair.gameObject.SetActive(false);
+            crosshair.gameObject.SetActive(false);
         }
     }
 }
